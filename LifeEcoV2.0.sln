@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31702.278
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LifeEco V2.0", "LifeEco V2.0\LifeEco V2.0.csproj", "{42674508-8C18-45BB-8790-6DF4F7E6B535}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{42674508-8C18-45BB-8790-6DF4F7E6B535}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{42674508-8C18-45BB-8790-6DF4F7E6B535}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{42674508-8C18-45BB-8790-6DF4F7E6B535}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{42674508-8C18-45BB-8790-6DF4F7E6B535}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {07AE9880-A5E3-41BA-9E01-5FED3C0B713C}
+	EndGlobalSection
+EndGlobal
