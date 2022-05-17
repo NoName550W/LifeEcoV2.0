@@ -247,7 +247,7 @@ namespace LifeEco_V2._0
 							break;
 					}
 				}
-			}
+			}//я люблю покетики от чая
 				
 				age++;
 				food -= genom[genom[5] % amountgenm];
