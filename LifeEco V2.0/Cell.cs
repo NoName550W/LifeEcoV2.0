@@ -53,14 +53,54 @@ namespace LifeEco_V2._0
 		// 1|4|7
 		// 2|5|8
 
-		private Cell[] neighbours = new Cell[8]; //Масив всех соседий кледки
-
 		private Coords coordsCell; //Место нахождение кледки
 
 		private Colours ColourCell; //Цвет кледки
 		private Colours oldColourCell;
 
 		private int amoutManyLiveNeighbors;
+
+		public ref Cell searchGoals(int direction, int type)
+        {
+			Random rnd = new Random();
+			int rm = direction - 1;
+			if (rm < 0)
+            {
+				rm += 8;
+            }
+			switch (type)
+            {
+				case 0:
+					if(!Form.cells[CoordsNeighbours[direction].Y, CoordsNeighbours[direction].X].lifeCell)
+                    {
+						return ref Form.cells[CoordsNeighbours[direction].Y, CoordsNeighbours[direction].X];
+                    }
+                    else if (!Form.cells[CoordsNeighbours[(direction + 1) % 8].Y, CoordsNeighbours[(direction + 1) % 8].X].lifeCell)
+                    {
+						return ref Form.cells[CoordsNeighbours[(direction + 1) % 8].Y, CoordsNeighbours[(direction + 1) % 8].X];
+                    }
+					else if (!Form.cells[CoordsNeighbours[rm].Y, CoordsNeighbours[rm].X].lifeCell)
+					{
+						return ref Form.cells[CoordsNeighbours[rm].Y, CoordsNeighbours[rm].X];
+					}
+					else
+	                {
+						int mutation = rnd.Next(0, 8);
+
+					}
+                    
+				break;
+				case 1:
+
+				break;
+				case 2:
+
+				break;
+			}
+				
+				
+			return ref Form.cells[CoordsNeighbours[0].Y, CoordsNeighbours[0].X];
+        }
 
 		public async void rendering() //Метод отрисофки кледки
 		{
@@ -207,15 +247,14 @@ namespace LifeEco_V2._0
 
 		public void update() //Метод обновления кледки
 		{
-			for (int i = 0; i < 9; i++)
+			for (int i = 0; i < 8; i++)
 			{
-					neighbours[i] = Form.cells[CoordsNeighbours[i].Y, CoordsNeighbours[i].Y];
-					if (neighbours[i].lifeCell)
+					if (Form.cells[CoordsNeighbours[i].Y, CoordsNeighbours[i].X].lifeCell)
 					{
 						amoutManyLiveNeighbors++;
 					}
 				
-			}
+			} 
 			if (lifeCell)
 			{
 				genomeSum = genom.Sum();
