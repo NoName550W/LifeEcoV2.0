@@ -41,6 +41,8 @@ namespace LifeEco_V2._0
 		// 15 8 действие 
 		// 16 сила атки\эфективность фотосинтеза
 		// действия: (0) фото синтез (1) размножение (2) атака врага (3) передача пищи соседу (4) подобрать еду из соседний мёртвой кледки (5) перейти на соседнею кледку
+		
+		public int genomeSum;
 
 		private int food; //Сколько у неё есть еды(ресурсов)
 
@@ -119,7 +121,7 @@ namespace LifeEco_V2._0
 			eating();
 		}
 
-		public void attack() //Метод атаки другой клетки
+		public void attack(int direction) //Метод атаки другой клетки
 		{
 
 		}
@@ -129,7 +131,7 @@ namespace LifeEco_V2._0
 
 		}
 
-		public void reproduction() //Метод создание новой кледки рядом
+		public void reproduction(int direction) //Метод создание новой кледки рядом
 		{
 
 		}
@@ -149,7 +151,7 @@ namespace LifeEco_V2._0
 			}			
 		}
 
-		public void movingOutput( ) // Передвежение кледки (выход из сторой)
+		public void movingOutput(int direction) // Передвежение кледки (выход из сторой)
 		{
 			movingInput(HP, genom, food, age);
 			lifeCell = false;
@@ -181,6 +183,7 @@ namespace LifeEco_V2._0
 			{
 				genom[i] = 0;
 			}
+			genomeSum = 0;
 			food = 1;
 			age = 0;
 			coordsCell = new Coords(Globaly, Globalx);
@@ -215,6 +218,7 @@ namespace LifeEco_V2._0
 			}
 			if (lifeCell)
 			{
+				genomeSum = genom.Sum();
 			if(age > 1)
 			{
 				for(int i = 7; i < 7 + genom[genom[7] % 9];i++)
@@ -227,11 +231,11 @@ namespace LifeEco_V2._0
 							break;
 
 						case 1://(1) размножение 
-							reproduction();
+							reproduction(i);
 							break;
 
 						case 2://(2) атака врага 
-							attack();
+							attack(i);
 							break;
 
 						case 3://(3) передача пищи соседу 
@@ -243,7 +247,7 @@ namespace LifeEco_V2._0
 							break;
 
 						case 5://(5) перейти на соседнею кледку
-							movingOutput();
+							movingOutput(i);
 							break;
 					}
 				}
