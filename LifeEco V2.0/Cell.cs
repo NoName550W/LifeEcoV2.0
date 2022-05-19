@@ -40,7 +40,7 @@ namespace LifeEco_V2._0
 		// 14 7 действие 
 		// 15 8 действие 
 		// 16 сила атки\эфективность фотосинтеза
-		// действия: (0) фото синтез (1) размножение (2) атака врага (3) передача пищи соседу (4) подобрать еду из соседний мёртвой кледки (5) перейти на соседнею кледку
+		// действия: (0) фото синтез (1) размножение (2) атака врага (3) подобрать еду из соседний мёртвой кледки (4) перейти на соседнею кледку
 		
 		public int genomeSum;
 
@@ -49,9 +49,9 @@ namespace LifeEco_V2._0
 		private int age; //Сколько итераций живёт клетка
 
 		private Coords[] CoordsNeighbours = new Coords[8];
-		// 0|3|6
-		// 1|4|7
-		// 2|5|8
+		// 0|3|5
+		// 1| |6
+		// 2|4|7
 
 		private Cell[] neighbours = new Cell[8];
 
@@ -62,9 +62,17 @@ namespace LifeEco_V2._0
 
 		private int amoutManyLiveNeighbors;
 
-		public int searchGoals(int direction, int type)
+
+		public birthData birthD = new birthData();
+
+		public damageData damageD = new damageData();
+
+		public movingInputData movingInputD = new movingInputData();
+
+
+
+		public int searchGoals(int direction, int type) //Поиск цели (0) пустая (1) атака (2) друг
 		{
-			Random rnd = new Random();
 			int rm = direction - 1;
 			if (rm < 0)
 			{
@@ -73,34 +81,62 @@ namespace LifeEco_V2._0
 			switch (type)
 			{
 				case 0:
-					if (!Form.cells[CoordsNeighbours[direction].Y, CoordsNeighbours[direction].X].lifeCell)
+					if (!neighbours[direction].lifeCell)
 					{
 						return direction;
 					}
-					else if (!Form.cells[CoordsNeighbours[(direction + 1) % 8].Y, CoordsNeighbours[(direction + 1) % 8].X].lifeCell)
+					else if (!neighbours[(direction + 1) % 8].lifeCell)
 					{
 						return (direction + 1) % 8;
 					}
-					else if (!Form.cells[CoordsNeighbours[rm].Y, CoordsNeighbours[rm].X].lifeCell)
+					else if (!neighbours[rm].lifeCell)
 					{
 						return rm;
 					}
 					else
 					{
-						int mutation = rnd.Next(0, 8);
-						return 0;
+						return -1;
 					}
-
 					break;
 				case 1:
-					
+					if (neighbours[direction].lifeCell && Math.Abs(genomeSum - neighbours[direction].genomeSum) > genom[genom[6] % amountgenm])
+					{
+						return direction;
+					}
+					else if (neighbours[(direction + 1) % 8].lifeCell && Math.Abs(genomeSum - neighbours[(direction + 1) % 8].genomeSum) > genom[genom[6] % amountgenm])
+					{
+						return (direction + 1) % 8;
+					}
+					else if (neighbours[rm].lifeCell && Math.Abs(genomeSum - neighbours[rm].genomeSum) > genom[genom[6] % amountgenm])
+					{
+						return rm;
+					}
+					else
+					{
+						return -1;
+					}
 					break;
 				case 2:
-					
+					if (neighbours[direction].lifeCell && Math.Abs(genomeSum - neighbours[direction].genomeSum) < genom[genom[6] % amountgenm])
+					{
+						return direction;
+					}
+					else if (neighbours[(direction + 1) % 8].lifeCell && Math.Abs(genomeSum - neighbours[(direction + 1) % 8].genomeSum) < genom[genom[6] % amountgenm])
+					{
+						return (direction + 1) % 8;
+					}
+					else if (neighbours[rm].lifeCell && Math.Abs(genomeSum - neighbours[rm].genomeSum) < genom[genom[6] % amountgenm])
+					{
+						return rm;
+					}
+					else
+					{
+						return -1;
+					}
 					break;
 				
 			}
-			return 0;
+			return -1;
 		}
 
 		public async void rendering() //Метод отрисофки кледки
@@ -132,6 +168,56 @@ namespace LifeEco_V2._0
 			ColourCell = new Colours(255, 255, 255);
 		}
 
+		public void eating(int amount = 0) //Метод получения пищи(ресурсов)
+		{
+			if (amount == 0)
+			{
+				for(int i = 0; i < 8; i++)
+				{
+
+				}
+			}
+			else
+			{
+
+			}			
+		}
+
+
+
+
+		public void reproduction(int direction) //Метод создание новой кледки рядом
+		{
+
+		}
+		
+		public void attack(int direction) //Метод атаки другой клетки
+		{
+
+		}
+		
+		public void movingOutput(int direction) // Передвежение кледки (выход из сторой)
+		{
+			int directionR = searchGoals(direction, 0);
+			if (directionR > -1)
+            {
+			neighbours[directionR].movingInputD.data(HP, genom, food, age);
+			lifeCell = false;
+			HP = 0;
+			for (int i = 0; i < amountgenm; i++)
+			{
+				genom[i] = 0;
+			}
+			food = 0;
+			age = 0;
+            }
+			
+
+		}
+
+
+
+
 		public void birth(int foodM, int[] genomM ) //Метод рождения этой клетки
 		{
 			lifeCell = true;			
@@ -150,59 +236,21 @@ namespace LifeEco_V2._0
 				{
 					int mutationGene = rnd.Next(0, amountgenm);
 					int powerMutation = rnd.Next(-1, 2);
-					genomM[i] += powerMutation;
+					genomM[mutationGene] += powerMutation;
 				}
 			
 			}
 			for (int i = 0; i < amountgenm; i++)
 			{
 				genom[i] = genomM[i];
+				genomeSum += genomM[i];
 			}
 			HP = genom[genom[1] % amountgenm];
-			eating();
+			eating(foodM);
 		}
 
-		public void attack(int direction) //Метод атаки другой клетки
+		public void damage(int damag) //Метод получения урона от другой клетки
 		{
-
-		}
-
-		public void damage() //Метод получения урона от другой клетки
-		{
-
-		}
-
-		public void reproduction(int direction) //Метод создание новой кледки рядом
-		{
-
-		}
-
-		public void eating(int amount = 0) //Метод получения пищи(ресурсов)
-		{
-			if (amount == 0)
-			{
-				for(int i = 0; i < 8; i++)
-				{
-
-				}
-			}
-			else
-			{
-
-			}			
-		}
-
-		public void movingOutput(int direction) // Передвежение кледки (выход из сторой)
-		{
-			movingInput(HP, genom, food, age);
-			lifeCell = false;
-			HP = 0;
-			for (int i = 0; i < amountgenm; i++)
-			{
-				genom[i] = 0;
-			}
-			food = 1;
-			age = 0;
 
 		}
 
@@ -214,6 +262,9 @@ namespace LifeEco_V2._0
 			food = foodO;
 			age = ageO;
 		}
+
+
+
 
 		public void initialization(int Globaly, int Globalx, Form1 localForm) //Первичная иницилизация кледки
 		{
@@ -239,6 +290,7 @@ namespace LifeEco_V2._0
 					if (x != 0 || y != 0)
 					{
 						CoordsNeighbours[i2] = new Coords(y + coordsCell.Y, x + coordsCell.X);
+						neighbours[i2] = Form.cells[CoordsNeighbours[i2].Y, CoordsNeighbours[i2].X];   
 						i2++;
 					}
 				}
@@ -250,7 +302,7 @@ namespace LifeEco_V2._0
 		{
 			for (int i = 0; i < 8; i++)
 			{
-					if (Form.cells[CoordsNeighbours[i].Y, CoordsNeighbours[i].X].lifeCell)
+					if (neighbours[i].lifeCell)
 					{
 						amoutManyLiveNeighbors++;
 					}
@@ -264,7 +316,7 @@ namespace LifeEco_V2._0
 				for(int i = 7; i < 7 + genom[genom[7] % 9];i++)
 				{
 					
-					switch (genom[genom[i]%6])
+					switch (genom[genom[i]%5])
 					{
 						case 0://(0) фото синтез
 							eating();
@@ -278,20 +330,17 @@ namespace LifeEco_V2._0
 							attack(i);
 							break;
 
-						case 3://(3) передача пищи соседу 
+						case 3://(3) подобрать еду из соседний мёртвой кледки
 
 							break;
 
-						case 4://(4) подобрать еду из соседний мёртвой кледки
-
-							break;
-
-						case 5://(5) перейти на соседнею кледку
+						case 4://(3) перейти на соседнею кледку
 							movingOutput(i);
+								i = 7 + genom[genom[7] % 9] + 1;
 							break;
 					}
 				}
-			}//я люблю покетики от чая
+			}
 				
 				age++;
 				food -= genom[genom[5] % amountgenm];

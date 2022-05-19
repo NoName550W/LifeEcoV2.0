@@ -41,6 +41,12 @@ namespace LifeEco_V2._0
                 for (int x = 0; x < 100; x++)
                 {
                     cells[y, x] = new Cell();
+                }
+            }
+            for (int y = 0; y < 100; y++)
+            {
+                for (int x = 0; x < 100; x++)
+                {
                     cells[y, x].paint = this.pictureBox1;
                     cells[y, x].initialization(y, x, this);
                 }
