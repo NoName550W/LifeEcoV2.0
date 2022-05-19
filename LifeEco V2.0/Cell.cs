@@ -53,6 +53,8 @@ namespace LifeEco_V2._0
 		// 1|4|7
 		// 2|5|8
 
+		private Cell[] neighbours = new Cell[8];
+
 		private Coords coordsCell; //Место нахождение кледки
 
 		private Colours ColourCell; //Цвет кледки
@@ -60,47 +62,46 @@ namespace LifeEco_V2._0
 
 		private int amoutManyLiveNeighbors;
 
-		public ref Cell searchGoals(int direction, int type)
-        {
+		public int searchGoals(int direction, int type)
+		{
 			Random rnd = new Random();
 			int rm = direction - 1;
 			if (rm < 0)
-            {
+			{
 				rm += 8;
-            }
+			}
 			switch (type)
-            {
+			{
 				case 0:
-					if(!Form.cells[CoordsNeighbours[direction].Y, CoordsNeighbours[direction].X].lifeCell)
-                    {
-						return ref Form.cells[CoordsNeighbours[direction].Y, CoordsNeighbours[direction].X];
-                    }
-                    else if (!Form.cells[CoordsNeighbours[(direction + 1) % 8].Y, CoordsNeighbours[(direction + 1) % 8].X].lifeCell)
-                    {
-						return ref Form.cells[CoordsNeighbours[(direction + 1) % 8].Y, CoordsNeighbours[(direction + 1) % 8].X];
-                    }
+					if (!Form.cells[CoordsNeighbours[direction].Y, CoordsNeighbours[direction].X].lifeCell)
+					{
+						return direction;
+					}
+					else if (!Form.cells[CoordsNeighbours[(direction + 1) % 8].Y, CoordsNeighbours[(direction + 1) % 8].X].lifeCell)
+					{
+						return (direction + 1) % 8;
+					}
 					else if (!Form.cells[CoordsNeighbours[rm].Y, CoordsNeighbours[rm].X].lifeCell)
 					{
-						return ref Form.cells[CoordsNeighbours[rm].Y, CoordsNeighbours[rm].X];
+						return rm;
 					}
 					else
-	                {
+					{
 						int mutation = rnd.Next(0, 8);
-
+						return 0;
 					}
-                    
-				break;
+
+					break;
 				case 1:
-
-				break;
+					
+					break;
 				case 2:
-
-				break;
+					
+					break;
+				
 			}
-				
-				
-			return ref Form.cells[CoordsNeighbours[0].Y, CoordsNeighbours[0].X];
-        }
+			return 0;
+		}
 
 		public async void rendering() //Метод отрисофки кледки
 		{
