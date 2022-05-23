@@ -1,18 +1,22 @@
-﻿public struct birthData
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+public struct BirthData
 {
-	public birthData(int a = 0)
+	public BirthData(int a = 0)
 	{
 		used = false;
-		food = 0;
+		food = a;
 		genom = new int[1];
 		genom[0] = 0;
 	}
-	public void data(int foodM, int[] genomM)
+	public void Data(int foodM, int[] genomM)
 	{
 		used = true;
 		food = foodM;
 		genom = new int[genomM.Length];
-		genom = genomM;
+		Array.Copy(genomM, genom, genomM.Length);
 	}
 	public bool used;
 	public int food;

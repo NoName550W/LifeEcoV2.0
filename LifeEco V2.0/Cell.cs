@@ -44,7 +44,7 @@ namespace LifeEco_V2._0
 		
 		public int genomeSum;
 
-		private int food; //Сколько у неё есть еды(ресурсов)
+		
 
 		private int age; //Сколько итераций живёт клетка
 
@@ -62,16 +62,15 @@ namespace LifeEco_V2._0
 
 		private int amoutManyLiveNeighbors;
 
+		public int food; //Сколько у неё есть еды(ресурсов)
 
-		public birthData birthD = new birthData();
+		public BirthData birthD = new BirthData();
 
-		public damageData damageD = new damageData();
-
-		public movingInputData movingInputD = new movingInputData();
-
+		public MovingInputData movingInputD = new MovingInputData();
 
 
-		public int searchGoals(int direction, int type) //Поиск цели (0) пустая (1) атака (2) друг
+
+		public int SearchGoals(int direction, int type) //Поиск цели (0) пустая (1) враг (2) друг
 		{
 			int rm = direction - 1;
 			if (rm < 0)
@@ -81,23 +80,32 @@ namespace LifeEco_V2._0
 			switch (type)
 			{
 				case 0:
-					if (!neighbours[direction].lifeCell)
-					{
-						return direction;
-					}
-					else if (!neighbours[(direction + 1) % 8].lifeCell)
-					{
-						return (direction + 1) % 8;
-					}
-					else if (!neighbours[rm].lifeCell)
-					{
-						return rm;
-					}
-					else
-					{
+					//if (!neighbours[direction].lifeCell && !neighbours[direction].birthD.used && !neighbours[direction].movingInputD.used)
+					//{
+					//	return direction;
+					//}
+					//else if (!neighbours[(direction + 1) % 8].lifeCell && !neighbours[(direction + 1) % 8].birthD.used && !neighbours[(direction + 1) % 8].movingInputD.used)
+					//{
+					//	return (direction + 1) % 8;
+					//}
+					//else if (!neighbours[rm].lifeCell && !neighbours[rm].birthD.used && !neighbours[rm].movingInputD.used)
+					//{
+					//	return rm;
+					//}
+					//else
+					//{
+						//for (int i = 7; i >= 0; i--)
+                        {
+						Random rnd = new Random();
+						int i = rnd.Next(0, 8);
+						if (!neighbours[i].lifeCell && !neighbours[i].birthD.used && !neighbours[i].movingInputD.used)
+                            {
+								return i;
+                            }
+                        }
 						return -1;
-					}
-					break;
+					//}
+					//break;
 				case 1:
 					if (neighbours[direction].lifeCell && Math.Abs(genomeSum - neighbours[direction].genomeSum) > genom[genom[6] % amountgenm])
 					{
@@ -139,69 +147,95 @@ namespace LifeEco_V2._0
 			return -1;
 		}
 
-		public async void rendering() //Метод отрисофки кледки
+		public void Rendering(int rog = 0) //Метод отрисофки кледки
 		{
-			await Task.Run(() =>
-			{
-				if (oldColourCell.Red != ColourCell.Red && oldColourCell.Green != ColourCell.Green && oldColourCell.Blue != ColourCell.Blue)
+
+				if (oldColourCell.Red != ColourCell.Red || oldColourCell.Green != ColourCell.Green || oldColourCell.Blue != ColourCell.Blue)
 				{
+
+
 					Graphics battlefield = paint.CreateGraphics();
 					SolidBrush Colour = new SolidBrush(Color.FromArgb(ColourCell.Red, ColourCell.Green, ColourCell.Blue));
 					battlefield.FillRectangle(Colour, coordsCell.Y * 10 + 1, coordsCell.X * 10 + 1, 9, 9);
 					oldColourCell = ColourCell;
+
 				}
-			});
+				if (rog == 1)
+				{
+					Graphics battlefield = paint.CreateGraphics();
+					SolidBrush Colour = new SolidBrush(Color.FromArgb(ColourCell.Red, ColourCell.Green, ColourCell.Blue));
+					battlefield.FillRectangle(Colour, coordsCell.Y * 10 + 1, coordsCell.X * 10 + 1, 9, 9);
+				//Console.WriteLine(coordsCell.X + " " + coordsCell.Y + " " + age);
+				}
+
 
 		}
 
-		public void death() //Метод смерти кледки
+		public void Death() //Метод смерти кледки
 		{
 			lifeCell = false;
-			
+			Console.WriteLine(HP + " " + food + " " + age);
 			for (int i = 0; i < amountgenm; i++)
 			{
 				genom[i] = 0;
 			}
-			food = (food + HP) * 2;
+			food = (food + HP);
 			HP = 0;
 			age = 0;
 			ColourCell = new Colours(255, 255, 255);
 		}
 
-		public void eating(int amount = 0) //Метод получения пищи(ресурсов)
+		public void Eating(int amount = 0, int direction = -1) //Метод получения пищи(ресурсов)
 		{
-			if (amount == 0)
+			if (amount == 0 && direction < 0)
 			{
-				for(int i = 0; i < 8; i++)
-				{
-
-				}
+				food += (genom[genom[16] % amountgenm] * (amoutManyLiveNeighbors + 1)) * ((coordsCell.X) + 1);
 			}
-			else
+			else if (amount != 0 && direction < 0)
 			{
+				food += amount;
+			} 
+			else if(direction > -1)
+            {
+				int directionR = SearchGoals(direction, 0);
+				if (directionR > -1)
+				{
+					food += neighbours[directionR].food;
+					neighbours[directionR].food = 0;
+				}
 
-			}			
+			}
 		}
 
 
 
 
-		public void reproduction(int direction) //Метод создание новой кледки рядом
+		public void Reproduction(int direction) //Метод создание новой кледки рядом
 		{
-
+			int directionR = SearchGoals(direction, 0);
+			if (directionR > -1)
+			{
+				neighbours[directionR].birthD.Data(food / 4, genom);
+				food /= 2;
+			}
 		}
 		
-		public void attack(int direction) //Метод атаки другой клетки
+		public void Attack(int direction) //Метод атаки другой клетки
 		{
-
-		}
-		
-		public void movingOutput(int direction) // Передвежение кледки (выход из сторой)
-		{
-			int directionR = searchGoals(direction, 0);
+			int directionR = SearchGoals(direction, 1);
 			if (directionR > -1)
             {
-			neighbours[directionR].movingInputD.data(HP, genom, food, age);
+				neighbours[directionR].Damage(genom[genom[16] % amountgenm]);
+
+			}
+		}
+		
+		public void MovingOutput(int direction) // Передвежение кледки (выход из старой)
+		{
+			int directionR = SearchGoals(direction, 0);
+			if (directionR > -1)
+            {
+			neighbours[directionR].movingInputD.Data(HP, genom, food, age);
 			lifeCell = false;
 			HP = 0;
 			for (int i = 0; i < amountgenm; i++)
@@ -211,19 +245,20 @@ namespace LifeEco_V2._0
 			food = 0;
 			age = 0;
             }
-			
-
 		}
 
 
 
 
-		public void birth(int foodM, int[] genomM ) //Метод рождения этой клетки
+		public void Birth(int foodM, int[] genomM ) //Метод рождения этой клетки
 		{
-			lifeCell = true;			
+            if (!lifeCell)
+            {
+			lifeCell = true;
+			Array.Copy(genomM, genom, genomM.Length);
 			Random rnd = new Random();
-			int mutation = rnd.Next(0, 1000);
-			if (mutation < genomM[0])
+			int mutation = rnd.Next(0, 100);
+			if (mutation < genom[0] * 2)
 			{
 				int amountMutationGene = rnd.Next(0, 11);
 				int amount = 1;
@@ -236,37 +271,48 @@ namespace LifeEco_V2._0
 				{
 					int mutationGene = rnd.Next(0, amountgenm);
 					int powerMutation = rnd.Next(-1, 2);
-					genomM[mutationGene] += powerMutation;
+					genom[mutationGene] += powerMutation;
 				}
-			
 			}
-			for (int i = 0; i < amountgenm; i++)
-			{
-				genom[i] = genomM[i];
-				genomeSum += genomM[i];
+			genomeSum = genom.Sum();
+			HP = genom[Math.Abs(genom[1] % amountgenm)];
+			Eating(foodM);
+			Console.WriteLine(coordsCell.X + " " + coordsCell.Y + " " + food);
 			}
-			HP = genom[genom[1] % amountgenm];
-			eating(foodM);
+
 		}
 
-		public void damage(int damag) //Метод получения урона от другой клетки
+		public void Damage(int damag) //Метод получения урона от другой клетки
 		{
-
+			HP -= damag;
 		}
 
-		public void movingInput(int HPO, int[] genomO, int foodO, int ageO) // Передвежение кледки (вход в новую)
+		public void MovingInput(int HPO, int[] genomO, int foodO, int ageO) // Передвежение кледки (вход в новую)
 		{
 			lifeCell = true;
 			HP = HPO;
-			genom = genomO;
-			food = foodO;
+			Array.Copy(genomO, genom, genomO.Length);
+			food += foodO;
 			age = ageO;
+			age++;
+			food -= genom[genom[5] % amountgenm];
+			HP += genom[genom[3] % amountgenm] * genom[genom[5] % amountgenm];
+
+			if (HP > genom[genom[2] % amountgenm])
+			{
+				HP = genom[genom[2] % amountgenm];
+			}
+			ColourCell = new Colours(HP, food, genomeSum);
+			if (food < 0 || HP <= 0 || age > genom[genom[4] % amountgenm])
+			{
+				Death();
+			}
 		}
 
 
 
 
-		public void initialization(int Globaly, int Globalx, Form1 localForm) //Первичная иницилизация кледки
+		public void Initialization(int Globaly, int Globalx, Form1 localForm) //Первичная иницилизация кледки
 		{
 			Form = localForm; 
 			lifeCell = false;
@@ -276,7 +322,7 @@ namespace LifeEco_V2._0
 				genom[i] = 0;
 			}
 			genomeSum = 0;
-			food = 1;
+			food = 2;
 			age = 0;
 			coordsCell = new Coords(Globaly, Globalx);
 			ColourCell = new Colours(255,255,255);
@@ -295,71 +341,116 @@ namespace LifeEco_V2._0
 					}
 				}
 			}
-			rendering();
+			Rendering();
 		}
 
-		public void update() //Метод обновления кледки
-		{
+		public void Update() //Метод обновления кледки
+		{            
+			if (birthD.used)
+            {
+				Birth(birthD.food, birthD.genom);
+				birthD = new BirthData();
+            }
 			for (int i = 0; i < 8; i++)
 			{
-					if (neighbours[i].lifeCell)
-					{
-						amoutManyLiveNeighbors++;
-					}
+				if (neighbours[i].lifeCell)
+				{
+					amoutManyLiveNeighbors++;
+				}
 				
 			} 
 			if (lifeCell)
 			{
+				//Random rnd = new Random();
+				//int mutation = rnd.Next(0, 1000);
+				//if (mutation < genom[0])
+				//{
+				//	int amountMutationGene = rnd.Next(0, 11);
+				//	int amount = 1;
+				//	if (amountMutationGene == 10)
+				//	{
+				//		amount = 2;
+				//	}
+
+				//	for (int i = 0; i < amount; i++)
+				//	{
+				//		int mutationGene = rnd.Next(0, amountgenm);
+				//		int powerMutation = rnd.Next(-1, 2);
+				//		genom[mutationGene] += powerMutation;
+				//	}
+				//}
 				genomeSum = genom.Sum();
-			if(age > 1)
+				Console.WriteLine(coordsCell.X + " " + coordsCell.Y + " " + food +" " + age);
+			if(age > 0)
 			{
-				for(int i = 7; i < 7 + genom[genom[7] % 9];i++)
+				int f = 8 + genom[genom[7] % amountgenm] % 3;
+				for (int i = 8; i < f;i++)
 				{
-					
-					switch (genom[genom[i]%5])
+					int f2 = genom[Math.Abs(genom[i] % amountgenm)] % 2;
+					switch (f2)
 					{
 						case 0://(0) фото синтез
-							eating();
+							Eating();
 							break;
 
 						case 1://(1) размножение 
-							reproduction(i);
+							if(food > 10)
+                            {
+								Reproduction(i);
+                            }
+							
 							break;
 
-						case 2://(2) атака врага 
-							attack(i);
-							break;
+						//case 2://(2) атака врага 
+						//	Attack(i);
+						//	break;
 
-						case 3://(3) подобрать еду из соседний мёртвой кледки
+						//case 3://(3) подобрать еду из соседний мёртвой кледки
+						//	Eating(0, i);
+						//	break;
 
-							break;
-
-						case 4://(3) перейти на соседнею кледку
-							movingOutput(i);
-								i = 7 + genom[genom[7] % 9] + 1;
-							break;
+						//case 4://(4) перейти на соседнею кледку
+						//	MovingOutput(i);
+						//		i = 7 + genom[genom[7] % 9] + 1;
+						//	break;
 					}
 				}
 			}
 				
 				age++;
-				food -= genom[genom[5] % amountgenm];
-				HP += genom[genom[3] % amountgenm] * genom[genom[5] % amountgenm];
+				//MessageBox.Show(genom[Math.Abs(genom[5] % amountgenm)] * (coordsCell.Y / 2)+" ");
+				food -= genom[Math.Abs(genom[5] % amountgenm)] * (coordsCell.Y);
+				HP -= coordsCell.X;
 
-				if(HP > genom[genom[2] % amountgenm])
+				
+				if(food <= 0 || HP <= 0 || age > genom[Math.Abs(genom[4] % amountgenm)])
                 {
-					HP = genom[genom[2] % amountgenm];
-				}
-				if(food < 0 || HP <= 0 || age >= genom[genom[4] % amountgenm])
+					Death();
+                } else
                 {
-					death();
+					HP += (genom[Math.Abs(genom[3] % amountgenm)] * genom[Math.Abs(genom[5] % amountgenm)]);
+					if (HP > genom[Math.Abs(genom[2] % amountgenm)])
+					{
+						HP = genom[Math.Abs(genom[2] % amountgenm)];
+					}
+				ColourCell.Data(HP * 1, food / 10000, age * 10);
                 }
+
+				Rendering();
 			}
 			else
 			{
 				food += amoutManyLiveNeighbors / 2;
 			}
-			rendering();
+
+   //         if (movingInputD.used) 
+			//{
+			//	MovingInput(movingInputD.HP, movingInputD.genom, movingInputD.food, movingInputD.age);
+			//	movingInputD = new MovingInputData();
+			//}
+
+			
+			amoutManyLiveNeighbors = 0;
 		}
 
 	}

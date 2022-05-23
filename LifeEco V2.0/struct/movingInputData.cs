@@ -1,21 +1,25 @@
-﻿public struct movingInputData
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+public struct MovingInputData
 {
-	public movingInputData(int a = 0)
+	public MovingInputData(int a = 0)
 	{
 		used = false;
-		HP = 0;
-		food = 0;
+		HP = a;
+		food = a;
 		genom = new int[1];
-		genom[0] = 0;
-		age = 0;
+		genom[0] = a;
+		age = a;
 	}
-	public void data(int HPO, int[] genomO, int foodO, int ageO)
+	public void Data(int HPO, int[] genomO, int foodO, int ageO)
     {
 		used = true;
 		HP = HPO;
 		food = foodO;
 		genom = new int[genomO.Length];
-		genom = genomO;
+		Array.Copy(genomO, genom, genomO.Length);
 		age = ageO;
 	}
 	public int HP;
