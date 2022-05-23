@@ -6,6 +6,7 @@ public struct MovingInputData
 {
 	public MovingInputData(int a = 0)
 	{
+		time = a;
 		used = false;
 		HP = a;
 		food = a;
@@ -13,8 +14,9 @@ public struct MovingInputData
 		genom[0] = a;
 		age = a;
 	}
-	public void Data(int HPO, int[] genomO, int foodO, int ageO)
+	public void Data(int timeG, int HPO, int[] genomO, int foodO, int ageO)
     {
+		time = timeG;
 		used = true;
 		HP = HPO;
 		food = foodO;
@@ -22,6 +24,7 @@ public struct MovingInputData
 		Array.Copy(genomO, genom, genomO.Length);
 		age = ageO;
 	}
+	public int time;
 	public int HP;
 	public bool used;
 	public int food;

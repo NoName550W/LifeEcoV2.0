@@ -16,7 +16,7 @@ namespace LifeEco_V2._0
 
         bool loop = false;
 
-        int i = 0;
+        public int Time = 0;
 
         public Form1()
         {
@@ -76,17 +76,29 @@ namespace LifeEco_V2._0
     //            0, 2, //11 12
     //            1, 18, //13 14
     //            5, 15 };//15 16
+                //int[] gen =
+                //{
+                //5, //0
+                //7, 4, //1 2
+                //1, 16, //3 4
+                //1, 1, //5 6
+                //17, 11, //7 8
+                //3, -1, //9 10
+                //0, 1, //11 12
+                //4, 21, //13 14
+                //4, 15 };//15 16
                 int[] gen =
                 {
-                5, //0
-                7, 4, //1 2
-                1, 16, //3 4
-                1, 1, //5 6
-                17, 11, //7 8
-                3, -1, //9 10
-                0, 1, //11 12
-                4, 21, //13 14
-                4, 15 };//15 16
+                4, //0
+                8, 4, //1 2
+                -3, 16, //3 4
+                3, 2, //5 6
+                17, 14, //7 8
+                4, -3, //9 10
+                1, 3, //11 12
+                7, 19, //13 14
+                5, 40};//15 16
+
             cells[0, 0].Birth(5, gen);
             cells[1, 0].Birth(5, gen);
             cells[2, 0].Birth(5, gen);
@@ -106,7 +118,7 @@ namespace LifeEco_V2._0
                 loop = true;
             while(loop)
             {
-                Console.WriteLine(i);
+                Console.WriteLine(Time);
                 for (int y = 0; y < 100; y++)
                 {
                     for (int x = 0; x < 100; x++)
@@ -115,7 +127,7 @@ namespace LifeEco_V2._0
                         
                     }
                 }
-                i++;
+                Time++;
 
             }
             });

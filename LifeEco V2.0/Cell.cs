@@ -16,6 +16,8 @@ namespace LifeEco_V2._0
 
 		public PictureBox paint;
 
+		private int time;
+
 		public bool lifeCell; //Являеться ли клетка живой
 
 		private int HP; //Сколько у неё здаровья
@@ -174,7 +176,7 @@ namespace LifeEco_V2._0
 		public void Death() //Метод смерти кледки
 		{
 			lifeCell = false;
-			Console.WriteLine(HP + " " + food + " " + age);
+			//Console.WriteLine(HP + " " + food + " " + age);
 			for (int i = 0; i < amountgenm; i++)
 			{
 				genom[i] = 0;
@@ -215,7 +217,7 @@ namespace LifeEco_V2._0
 			int directionR = SearchGoals(direction, 0);
 			if (directionR > -1)
 			{
-				neighbours[directionR].birthD.Data(food / 4, genom);
+				neighbours[directionR].birthD.Data(time, food / 4, genom);
 				food /= 2;
 			}
 		}
@@ -235,7 +237,7 @@ namespace LifeEco_V2._0
 			int directionR = SearchGoals(direction, 0);
 			if (directionR > -1)
             {
-			neighbours[directionR].movingInputD.Data(HP, genom, food, age);
+			neighbours[directionR].movingInputD.Data(time, HP, genom, food, age);
 			lifeCell = false;
 			HP = 0;
 			for (int i = 0; i < amountgenm; i++)
@@ -277,7 +279,7 @@ namespace LifeEco_V2._0
 			genomeSum = genom.Sum();
 			HP = genom[Math.Abs(genom[1] % amountgenm)];
 			Eating(foodM);
-			Console.WriteLine(coordsCell.X + " " + coordsCell.Y + " " + food);
+			//Console.WriteLine(coordsCell.X + " " + coordsCell.Y + " " + food);
 			}
 
 		}
@@ -314,6 +316,7 @@ namespace LifeEco_V2._0
 
 		public void Initialization(int Globaly, int Globalx, Form1 localForm) //Первичная иницилизация кледки
 		{
+			time = 0;
 			Form = localForm; 
 			lifeCell = false;
 			HP = 0;
@@ -345,8 +348,9 @@ namespace LifeEco_V2._0
 		}
 
 		public void Update() //Метод обновления кледки
-		{            
-			if (birthD.used)
+		{
+			time = Form.Time;
+			if (birthD.used && birthD.time < time)
             {
 				Birth(birthD.food, birthD.genom);
 				birthD = new BirthData();
@@ -380,7 +384,7 @@ namespace LifeEco_V2._0
 				//	}
 				//}
 				genomeSum = genom.Sum();
-				Console.WriteLine(coordsCell.X + " " + coordsCell.Y + " " + food +" " + age);
+				//Console.WriteLine(coordsCell.X + " " + coordsCell.Y + " " + food +" " + age);
 			if(age > 0)
 			{
 				int f = 8 + genom[genom[7] % amountgenm] % 3;
@@ -443,7 +447,7 @@ namespace LifeEco_V2._0
 				food += amoutManyLiveNeighbors / 2;
 			}
 
-   //         if (movingInputD.used) 
+   //       if (movingInputD.used) 
 			//{
 			//	MovingInput(movingInputD.HP, movingInputD.genom, movingInputD.food, movingInputD.age);
 			//	movingInputD = new MovingInputData();
