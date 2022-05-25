@@ -184,14 +184,14 @@ namespace LifeEco_V2._0
 			food = (food + HP);
 			HP = 0;
 			age = 0;
-			ColourCell = new Colours(255, 255, 255);
+			ColourCell = new Colours(255 - food / 10000, 255, 255 - food / 10000);
 		}
 
 		public void Eating(int amount = 0, int direction = -1) //Метод получения пищи(ресурсов)
 		{
 			if (amount == 0 && direction < 0)
 			{
-				food += (genom[genom[16] % amountgenm] * (amoutManyLiveNeighbors + 1)) * ((coordsCell.X) + 1);
+				food += (genom[genom[16] % amountgenm] * ((amoutManyLiveNeighbors + 1) / 2)) * ((coordsCell.X) + 1);
 			}
 			else if (amount != 0 && direction < 0)
 			{
@@ -260,7 +260,7 @@ namespace LifeEco_V2._0
 			Array.Copy(genomM, genom, genomM.Length);
 			Random rnd = new Random();
 			int mutation = rnd.Next(0, 100);
-			if (mutation < genom[0] * 2)
+			if (mutation < (genom[Math.Abs(genom[0] % amountgenm)] + 2) * 2)
 			{
 				int amountMutationGene = rnd.Next(0, 11);
 				int amount = 1;
@@ -385,7 +385,7 @@ namespace LifeEco_V2._0
 				//}
 				genomeSum = genom.Sum();
 				//Console.WriteLine(coordsCell.X + " " + coordsCell.Y + " " + food +" " + age);
-			if(age > 0)
+			if(age >= 0)
 			{
 				int f = 8 + genom[genom[7] % amountgenm] % 3;
 				for (int i = 8; i < f;i++)
@@ -437,7 +437,7 @@ namespace LifeEco_V2._0
 					{
 						HP = genom[Math.Abs(genom[2] % amountgenm)];
 					}
-				ColourCell.Data(HP * 1, food / 10000, age * 10);
+				ColourCell.Data(HP * 1, food / 1000, age * 10);
                 }
 
 				Rendering();
