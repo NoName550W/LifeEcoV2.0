@@ -46,7 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cell.cs" />
+    <Compile Include="Class\Cell.cs" />
     <Compile Include="struct\BirthData.cs" />
     <Compile Include="struct\Colourscs.cs" />
     <Compile Include="struct\Coords.cs" />
@@ -60,6 +60,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="struct\Direction.cs" />
     <Compile Include="struct\MovingInputData.cs" />
+    <Compile Include="Class\World.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>

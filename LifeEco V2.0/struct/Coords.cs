@@ -1,6 +1,6 @@
 ﻿public struct Coords
 {
-	public Coords(int y, int x)
+	public Coords(int x, int y)
 	{
 		if(x > 99)
 		{
@@ -28,7 +28,6 @@
 		}
 		
 	}
-	public int Y;
 	public int X;
-	
+	public int Y;
 }
