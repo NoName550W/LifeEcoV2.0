@@ -57,9 +57,9 @@ namespace LifeEco_V2._0
 				1, 14, //3 4
 				1, 1, //5 6
 				12, 11, //7 8
-				1, 1, //9 10
-				0, 2, //11 12
-				1, 10, //13 14
+				1, 15, //9 10
+				0, 3, //11 12
+				1, 9, //13 14
 				2, 15 };//15 16
 
 			//cells[0, 0].Birth(10, gen);
@@ -74,6 +74,8 @@ namespace LifeEco_V2._0
 			//        cells[y, x].Update();
 			//    }
 			//}
+			world.cells.Add(new Cell(world, pictureBox1, world.cells.Count, 10, 10, 20, gen, 1));
+			//world.cells.Add(new Cell(world, pictureBox1, world.cells.Count, 50, 10, 5, gen, 1));
 		}
 
 		private async void button3_Click(object sender, EventArgs e)
@@ -83,11 +85,12 @@ namespace LifeEco_V2._0
 				loop = true;
 				while(loop)
 				{
-					for(int i = world.cells.Count - 1; i >= 0; i++)
+					for(int i = world.cells.Count - 1; i >= 0; i--)
                     {
-						world.cells[i].Update();
+						world.cells[i].Update(i);
 					}
 					world.passageOfTime();
+					
 				}
 			});
 
@@ -103,7 +106,8 @@ namespace LifeEco_V2._0
 					Graphics battlefield = pictureBox1.CreateGraphics();
 					SolidBrush Colour = new SolidBrush(Color.FromArgb(255, 255, 255));
 					battlefield.FillRectangle(Colour, y * 10 + 1, x * 10 + 1, 9, 9);
-
+					
+					label1.Text = world.Time.ToString();
 				}
 			}
 			

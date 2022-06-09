@@ -21,6 +21,7 @@ namespace LifeEco_V2._0
 				world.lifeCell[X, Y] = true;
 				world.IndexCells[X, Y] = index;
 				paint = Paint;
+				directionCell = new Direction(directionM);
 				HP = 0;
 				age = 0;
 				food = world.food[X, Y];
@@ -73,7 +74,8 @@ namespace LifeEco_V2._0
             {
 				world.cells.RemoveAt(index);
 			}
-			
+			ColourCell.Data(HP * 1, food / 1000, age * 10);
+			Rendering();
 		}
 
 		public World world;
@@ -159,8 +161,6 @@ namespace LifeEco_V2._0
 					battlefield.FillRectangle(Colour, CoordsCell.Y * 10 + 1, CoordsCell.X * 10 + 1, 9, 9);
 				//Console.WriteLine(coordsCell.X + " " + coordsCell.Y + " " + age);
 				}
-
-
 		}
 
 		public void Death() //Метод смерти кледки
@@ -168,6 +168,8 @@ namespace LifeEco_V2._0
 			world.lifeCell[CoordsCell.X, CoordsCell.Y] = false;
 			world.IndexCells[CoordsCell.X, CoordsCell.Y] = -1;
 			world.food[CoordsCell.X, CoordsCell.Y] = (food + HP);
+			ColourCell.Data(255, 255, 255);
+			Console.WriteLine(index + " " + world.Time);
 			world.cells.RemoveAt(index);
 		}
 
@@ -175,66 +177,79 @@ namespace LifeEco_V2._0
 		{
 			if (amount == 0 && direction < 0)
 			{
-				food += (genom[genom[16] % amountgenm] * ((amoutManyLiveNeighbors + 1) / 2)) * ((CoordsCell.X) + 1);
+				food += (genom[Math.Abs(genom[16] % amountgenm)]/* * (CoordsCell.X / 2) + 1*/);
 			}
 			else if (amount != 0 && direction < 0)
 			{
 				food += amount;
 			} 
-			else if(direction > -1)
-            {
-				int directionR = SearchGoals(direction, 0);
-				if (directionR > -1)
-				{
-					food += neighbours[directionR].food;
-					neighbours[directionR].food = 0;
-				}
+			//else if(direction > -1)
+			//{
+			//	int directionR = SearchGoals(direction, 0);
+			//	if (directionR > -1)
+			//	{
+			//		food += neighbours[directionR].food;
+			//		neighbours[directionR].food = 0;
+			//	}
 
-			}
+			//}
 		}
 
 
 
 
-		public void Reproduction() //Метод создание новой кледки рядом
+		public void Reproduction(int dis) //Метод создание новой кледки рядом
 		{
 			//World Temp, PictureBox Paint, int indexTemp, int X, int Y, int foodM, int[] genomM, Direction directionM
 			if (!world.lifeCell[CoordsNeighbours[directionCell.directionBack].X, CoordsNeighbours[directionCell.directionBack].Y])
 			{
-				world.cells.Add(new Cell(world, paint, world.cells.Count, CoordsNeighbours[directionCell.directionBack].X, CoordsNeighbours[directionCell.directionBack].Y, food / 4, genom, directionCell.direction));
-				food /= 2;
-			}
-		}
-		
-		public void Attack(int direction) //Метод атаки другой клетки
-		{
-			int directionR = SearchGoals(direction, 1);
-			if (directionR > -1)
-            {
-				neighbours[directionR].Damage(genom[genom[16] % amountgenm]);
+				if (dis > 0)
+                {
+					if (!world.lifeCell[CoordsNeighbours[directionCell.directionBack].X, CoordsNeighbours[directionCell.directionBack].Y])
+					{
+						world.cells.Add(new Cell(world, paint, world.cells.Count, CoordsNeighbours[directionCell.directionBack].X, CoordsNeighbours[directionCell.directionBack].Y, food, genom, directionCell.direction));
+						food /= 2;
+					}
+                }
+                else
+                {
+					if (!world.lifeCell[CoordsNeighbours[directionCell.direction].X, CoordsNeighbours[directionCell.direction].Y])
+					{
+						world.cells.Add(new Cell(world, paint, world.cells.Count, CoordsNeighbours[directionCell.direction].X, CoordsNeighbours[directionCell.direction].Y, food, genom, directionCell.direction));
+						food /= 2;
+					}
+				}
 
 			}
 		}
 		
-		public void Moving(int direction) // Передвежение кледки (выход из старой)
+		//public void Attack(int direction) //Метод атаки другой клетки
+		//{
+		//	int directionR = SearchGoals(direction, 1);
+		//	if (directionR > -1)
+  //          {
+		//		neighbours[directionR].Damage(genom[genom[16] % amountgenm]);
+
+		//	}
+		//}
+		
+		public void Moving() // Передвежение кледки 
 		{
 
         
 		}
-
-
-
 
 		public void Damage(int damag) //Метод получения урона от другой клетки
 		{
 			HP -= damag;
 		}
 
-		public void Update() //Метод обновления кледки
+		public void Update(int indexT) //Метод обновления кледки
 		{
+			index = indexT;
 			if(age >= 0)
 			{
-				int f = 8 + genom[genom[7] % amountgenm] % 3;
+				int f = 8 + genom[genom[7] % amountgenm] % 8;
 				for (int i = 8; i < f;i++)
 				{
 					int f2 = genom[Math.Abs(genom[i] % amountgenm)] % 2;
@@ -247,14 +262,18 @@ namespace LifeEco_V2._0
 						case 1://(1) размножение 
 							if(food > 10)
                             {
-								Reproduction();
+								Reproduction(0);
                             }
-							
+							directionCell.R();
 							break;
 
-						//case 2://(2) атака врага 
-						//	Attack(i);
-						//	break;
+                        case 2://(2) атака врага 
+							if (food > 10)
+							{
+								Reproduction(1);
+							}
+							directionCell.R();
+							break;
 
 						//case 3://(3) подобрать еду из соседний мёртвой кледки
 						//	Eating(0, i);
@@ -270,8 +289,8 @@ namespace LifeEco_V2._0
 				
 			age++;
 			//MessageBox.Show(genom[Math.Abs(genom[5] % amountgenm)] * (coordsCell.Y / 2)+" ");
-			food -= genom[Math.Abs(genom[5] % amountgenm)] * (CoordsCell.Y);
-			HP -= CoordsCell.X;
+			food -= genom[Math.Abs(genom[5] % amountgenm)]/* * (CoordsCell.Y / 2)*/;
+			//HP -= /*CoordsCell.X / 2;*/
 
 			if (food <= 0 || HP <= 0 || age > genom[Math.Abs(genom[4] % amountgenm)])
 			{
