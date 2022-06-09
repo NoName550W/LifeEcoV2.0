@@ -10,7 +10,7 @@ namespace LifeEco_V2._0
     {
         public List<Cell> cells = new List<Cell>();
         public bool[,] lifeCell = new bool[100,100];
-        public int[,] NamberCells = new int[100, 100];
+        public int[,] IndexCells = new int[100, 100];
         public int[,] food = new int[100, 100];
         public int[,] temperature = new int[100, 100];
         public int[,] toxicity = new int[100, 100];

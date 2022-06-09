@@ -12,60 +12,63 @@ namespace LifeEco_V2._0
 {
 	public partial class Cell
 	{
-		public Cell(World worldTemp, PictureBox Paint, int index, int X, int Y, int foodM, int[] genomM )//Первичная иницилизация кледки
+		public Cell(World worldTemp, PictureBox Paint, int indexTemp, int X, int Y, int foodM, int[] genomM, Direction directionM )//Первичная иницилизация кледки
         {
 			world = worldTemp;
+			index = indexTemp;
 			if (!world.lifeCell[X,Y])
             {
-			world.lifeCell[X, Y] = true;			
-			paint = Paint;
-			HP = 0;
-			age = 0;
+				world.lifeCell[X, Y] = true;
+				world.IndexCells[X, Y] = index;
+				paint = Paint;
+				HP = 0;
+				age = 0;
+				food = world.food[X, Y];
+				world.food[X, Y] = 0;
+				CoordsCell = new Coords(X, Y);
+				ColourCell = new Colours(255, 255, 255);
 
-			CoordsCell = new Coords(X, Y);
-			ColourCell = new Colours(255, 255, 255);
-
-			int i2 = 0;
-			int[] Numbering = { 0, 7, 6, 1, 5, 2, 3, 4 };
-			for (int y = -1; y < 2; y++)
-			{
-				for (int x = -1; x < 2; x++)
+				int i2 = 0;
+				int[] Numbering = { 0, 7, 6, 1, 5, 2, 3, 4 };
+				for (int y = -1; y < 2; y++)
 				{
-					if (x != 0 || y != 0)
+					for (int x = -1; x < 2; x++)
 					{
-						CoordsNeighbours[Numbering[i2++]] = new Coords(y + CoordsCell.Y, x + CoordsCell.X);
+						if (x != 0 || y != 0)
+						{
+							CoordsNeighbours[Numbering[i2++]] = new Coords(y + CoordsCell.Y, x + CoordsCell.X);
+						}
 					}
 				}
-			}
 
-			
-			Array.Copy(genomM, genom, genomM.Length);
-			Random rnd = new Random();
-			int mutation = rnd.Next(0, 100);
-			if (mutation < (genom[Math.Abs(genom[0] % amountgenm)] + 2) * 2)
-			{
-				int amountMutationGene = rnd.Next(0, 11);
-				int amount = 1;
-				if (amountMutationGene == 10) 
+
+				Array.Copy(genomM, genom, genomM.Length);
+				Random rnd = new Random();
+				int mutation = rnd.Next(0, 100);
+				if (mutation < (genom[Math.Abs(genom[0] % amountgenm)] + 2) * 2)
 				{
-					amount = 2;
+					int amountMutationGene = rnd.Next(0, 11);
+					int amount = 1;
+					if (amountMutationGene == 10)
+					{
+						amount = 2;
+					}
+
+					for (int i = 0; i < amount; i++)
+					{
+						int mutationGene = rnd.Next(0, amountgenm);
+						int powerMutation = rnd.Next(-1, 2);
+						genom[mutationGene] += powerMutation;
+					}
 				}
 
-				for (int i = 0; i < amount; i++)
-				{
-					int mutationGene = rnd.Next(0, amountgenm);
-					int powerMutation = rnd.Next(-1, 2);
-					genom[mutationGene] += powerMutation;
-				}
+				genomeSum = genom.Sum();
+				CoordsCell = new Coords(Y, X);
+				HP = genom[Math.Abs(genom[1] % amountgenm)];
+				Eating(foodM);
+				//Console.WriteLine(coordsCell.X + " " + coordsCell.Y + " " + food);
+				Rendering();
 			}
-			
-			genomeSum = genom.Sum();
-			CoordsCell = new Coords(Y, X);
-			HP = genom[Math.Abs(genom[1] % amountgenm)];
-			Eating(foodM);
-			//Console.WriteLine(coordsCell.X + " " + coordsCell.Y + " " + food);
-			Rendering();
-            }
             else
             {
 				world.cells.RemoveAt(index);
@@ -77,10 +80,10 @@ namespace LifeEco_V2._0
 
 		private PictureBox paint;
 
-		private int time;
-
 		private int HP; //Сколько у неё здаровья
         private const int amountgenm = 17;
+
+		private int index;
 
 		private int[] genom = new int[amountgenm]; //Геном клетки
         /*
@@ -113,8 +116,6 @@ namespace LifeEco_V2._0
 		// 0|3|5
 		// 1| |6
 		// 2|4|7
-
-		private Cell[] neighbours = new Cell[8];
 
 		private Coords CoordsCell; //Место нахождение кледки
 
@@ -164,16 +165,10 @@ namespace LifeEco_V2._0
 
 		public void Death() //Метод смерти кледки
 		{
-			lifeCell = false;
-			//Console.WriteLine(HP + " " + food + " " + age);
-			for (int i = 0; i < amountgenm; i++)
-			{
-				genom[i] = 0;
-			}
+			world.lifeCell[CoordsCell.X, CoordsCell.Y] = false;
+			world.IndexCells[CoordsCell.X, CoordsCell.Y] = -1;
 			food = (food + HP);
-			HP = 0;
-			age = 0;
-			ColourCell = new Colours(255 - food / 10000, 255, 255 - food / 10000);
+			world.food[CoordsCell.X, CoordsCell.Y] = food;
 		}
 
 		public void Eating(int amount = 0, int direction = -1) //Метод получения пищи(ресурсов)
@@ -237,22 +232,6 @@ namespace LifeEco_V2._0
 
 		public void Update() //Метод обновления кледки
 		{
-			time = Form.Time;
-			//if (birthD.used && birthD.time < time)
-   //         {
-			//	Birth(birthD.food, birthD.genom);
-			//	birthD = new BirthData();
-   //         }
-			for (int i = 0; i < 8; i++)
-			{
-				if (neighbours[i].lifeCell)
-				{
-					amoutManyLiveNeighbors++;
-				}
-				
-			} 
-			if (lifeCell)
-			{
 			if(age >= 0)
 			{
 				int f = 8 + genom[genom[7] % amountgenm] % 3;
@@ -289,40 +268,34 @@ namespace LifeEco_V2._0
 				}
 			}
 				
-				age++;
-				//MessageBox.Show(genom[Math.Abs(genom[5] % amountgenm)] * (coordsCell.Y / 2)+" ");
-				food -= genom[Math.Abs(genom[5] % amountgenm)] * (CoordsCell.Y);
-				HP -= CoordsCell.X;
+			age++;
+			//MessageBox.Show(genom[Math.Abs(genom[5] % amountgenm)] * (coordsCell.Y / 2)+" ");
+			food -= genom[Math.Abs(genom[5] % amountgenm)] * (CoordsCell.Y);
+			HP -= CoordsCell.X;
 
-				
-				if(food <= 0 || HP <= 0 || age > genom[Math.Abs(genom[4] % amountgenm)])
-                {
-					Death();
-                } else
-                {
-					HP += (genom[Math.Abs(genom[3] % amountgenm)] * genom[Math.Abs(genom[5] % amountgenm)]);
-					if (HP > genom[Math.Abs(genom[2] % amountgenm)])
-					{
-						HP = genom[Math.Abs(genom[2] % amountgenm)];
-					}
-				ColourCell.Data(HP * 1, food / 1000, age * 10);
-                }
-
-				Rendering();
+			if (food <= 0 || HP <= 0 || age > genom[Math.Abs(genom[4] % amountgenm)])
+			{
+				Death();
 			}
 			else
 			{
-				food += amoutManyLiveNeighbors / 2;
+				HP += (genom[Math.Abs(genom[3] % amountgenm)] * genom[Math.Abs(genom[5] % amountgenm)]);
+				if (HP > genom[Math.Abs(genom[2] % amountgenm)])
+				{
+					HP = genom[Math.Abs(genom[2] % amountgenm)];
+				}
+				ColourCell.Data(HP * 1, food / 1000, age * 10);
 			}
 
-   //       if (movingInputD.used) 
+			Rendering();
+
+
+
+			//       if (movingInputD.used) 
 			//{
 			//	MovingInput(movingInputD.HP, movingInputD.genom, movingInputD.food, movingInputD.age);
 			//	movingInputD = new MovingInputData();
 			//}
-
-			
-			amoutManyLiveNeighbors = 0;
 		}
 
 	}
