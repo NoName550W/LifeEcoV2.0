@@ -4,10 +4,8 @@ using System.Linq;
 using System.Text;
 public struct Direction
 {
-	public Direction(int directionM = -1)
+	public Direction(int directionM)
 	{
-		if (directionM < 0)
-        {
 			if (directionM > 7)
 			{
 				direction = directionM - 8;
@@ -20,15 +18,15 @@ public struct Direction
 			{
 				direction = directionM;
 			}
-		} 
-		else
-        {
-			Random rnd = new Random();
-			int directionR = rnd.Next(0, 8);
-			direction = directionR;
-		}
 		directionBack = (direction + 4) % 8;
+	}
 
+	public Direction(float h = 0)
+    {
+		Random rnd = new Random();
+		int directionR = rnd.Next(0, 8);
+		direction = directionR;	
+		directionBack = (direction + 4) % 8;
 	}
 
 	public void L()

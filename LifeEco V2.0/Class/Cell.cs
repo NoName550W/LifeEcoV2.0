@@ -12,7 +12,7 @@ namespace LifeEco_V2._0
 {
 	public partial class Cell
 	{
-		public Cell(World worldTemp, PictureBox Paint, int indexTemp, int X, int Y, int foodM, int[] genomM, Direction directionM )//Первичная иницилизация кледки
+		public Cell(World worldTemp, PictureBox Paint, int indexTemp, int X, int Y, int foodM, int[] genomM, int directionM )//Первичная иницилизация кледки
         {
 			world = worldTemp;
 			index = indexTemp;
@@ -198,12 +198,10 @@ namespace LifeEco_V2._0
 
 		public void Reproduction() //Метод создание новой кледки рядом
 		{
-			
-
+			//World Temp, PictureBox Paint, int indexTemp, int X, int Y, int foodM, int[] genomM, Direction directionM
 			if (!world.lifeCell[CoordsNeighbours[directionCell.directionBack].X, CoordsNeighbours[directionCell.directionBack].Y])
 			{
-				world.cells.Add(Cell())
-				(time, food / 4, genom);
+				world.cells.Add(new Cell(world, paint, world.cells.Count, CoordsNeighbours[directionCell.directionBack].X, CoordsNeighbours[directionCell.directionBack].Y, food / 4, genom, directionCell.direction));
 				food /= 2;
 			}
 		}
@@ -249,7 +247,7 @@ namespace LifeEco_V2._0
 						case 1://(1) размножение 
 							if(food > 10)
                             {
-								Reproduction(i);
+								Reproduction();
                             }
 							
 							break;
