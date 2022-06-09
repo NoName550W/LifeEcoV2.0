@@ -108,7 +108,7 @@ namespace LifeEco_V2._0
          действия: (0) фото синтез(1) размножение(2) атака врага(3) подобрать еду из соседний мёртвой кледки(4) перейти на соседнею кледк 
 		*/
 
-        private Direction direction;
+        private Direction directionCell;
 
 		private int age; //Сколько итераций живёт клетка
 
@@ -167,8 +167,8 @@ namespace LifeEco_V2._0
 		{
 			world.lifeCell[CoordsCell.X, CoordsCell.Y] = false;
 			world.IndexCells[CoordsCell.X, CoordsCell.Y] = -1;
-			food = (food + HP);
-			world.food[CoordsCell.X, CoordsCell.Y] = food;
+			world.food[CoordsCell.X, CoordsCell.Y] = (food + HP);
+			world.cells.RemoveAt(index);
 		}
 
 		public void Eating(int amount = 0, int direction = -1) //Метод получения пищи(ресурсов)
@@ -196,12 +196,14 @@ namespace LifeEco_V2._0
 
 
 
-		public void Reproduction(int direction) //Метод создание новой кледки рядом
+		public void Reproduction() //Метод создание новой кледки рядом
 		{
-			int directionR = SearchGoals(direction, 0);
-			if (directionR > -1)
+			
+
+			if (!world.lifeCell[CoordsNeighbours[directionCell.directionBack].X, CoordsNeighbours[directionCell.directionBack].Y])
 			{
-				neighbours[directionR].birthD.Data(time, food / 4, genom);
+				world.cells.Add(Cell())
+				(time, food / 4, genom);
 				food /= 2;
 			}
 		}
