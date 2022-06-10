@@ -21,7 +21,7 @@ namespace LifeEco_V2._0
 				world.lifeCell[X, Y] = true;
 				world.IndexCells[X, Y] = index;
 				paint = Paint;
-				directionCell = new Direction(directionM);
+				directionCell = new Direction();
 				HP = 0;
 				age = 0;
 				food = world.food[X, Y];
@@ -207,7 +207,7 @@ namespace LifeEco_V2._0
                 {
 					if (!world.lifeCell[CoordsNeighbours[directionCell.directionBack].X, CoordsNeighbours[directionCell.directionBack].Y])
 					{
-						world.cells.Add(new Cell(world, paint, world.cells.Count, CoordsNeighbours[directionCell.directionBack].X, CoordsNeighbours[directionCell.directionBack].Y, food, genom, directionCell.direction));
+						world.cells.Add(new Cell(world, paint, world.cells.Count, CoordsNeighbours[directionCell.directionBack].X, CoordsNeighbours[directionCell.directionBack].Y, food / 2, genom, directionCell.direction));
 						food /= 2;
 					}
                 }
@@ -215,7 +215,7 @@ namespace LifeEco_V2._0
                 {
 					if (!world.lifeCell[CoordsNeighbours[directionCell.direction].X, CoordsNeighbours[directionCell.direction].Y])
 					{
-						world.cells.Add(new Cell(world, paint, world.cells.Count, CoordsNeighbours[directionCell.direction].X, CoordsNeighbours[directionCell.direction].Y, food, genom, directionCell.direction));
+						world.cells.Add(new Cell(world, paint, world.cells.Count, CoordsNeighbours[directionCell.direction].X, CoordsNeighbours[directionCell.direction].Y, food / 2, genom, directionCell.direction));
 						food /= 2;
 					}
 				}
@@ -263,16 +263,18 @@ namespace LifeEco_V2._0
 							if(food > 10)
                             {
 								Reproduction(0);
+								directionCell.R();
                             }
-							directionCell.R();
+							
 							break;
 
                         case 2://(2) атака врага 
 							if (food > 10)
 							{
 								Reproduction(1);
+								directionCell.R();
 							}
-							directionCell.R();
+							
 							break;
 
 						//case 3://(3) подобрать еду из соседний мёртвой кледки
